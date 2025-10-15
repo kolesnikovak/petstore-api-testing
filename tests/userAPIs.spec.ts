@@ -31,7 +31,24 @@ test.describe('User API Tests', () => {
         const actualUserResponseBody = await createUserResponse.json();
         expectedResponseSchema.parse(actualUserResponseBody);
 
+    });
+    test ('Get User by Username', async ({request}) => {
+        const username = "TestUserNameKatya";
+        const getUserResponse = await request.get(`${BASE_URL}/user/${username}`);
+        expect(getUserResponse.status()).toBe(200);
 
-        
+        const expectedGetUserResponseSchema = z.object({
+            id: z.number(),
+            username: z.string(),
+            firstName: z.string(),
+            lastName: z.string(),
+            email: z.string().email(),
+            password: z.string(),
+            phone: z.string(),
+            userStatus: z.number(),
+        });
+
+        const actualGetUserResponseBody = await getUserResponse.json();
+        expectedGetUserResponseSchema.parse(actualGetUserResponseBody);
     });
 });
