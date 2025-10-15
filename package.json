@@ -1,0 +1,31 @@
+{
+  "name": "petstore-api-testing",
+  "version": "1.0.0",
+  "description": "API testing with Playwright, TypeScript, Zod, and Faker",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "report": "playwright show-report"
+  },
+  "keywords": [
+    "playwright",
+    "api-testing",
+    "typescript",
+    "zod",
+    "faker"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.47.0",
+    "@types/node": "^22.5.4",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.0.1",
+    "dotenv": "^16.4.5",
+    "zod": "^3.23.8"
+  }
+}
