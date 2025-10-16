@@ -1,7 +1,7 @@
 import {test, expect} from '@playwright/test';
 import {faker} from '@faker-js/faker';
 import {z} from 'zod';
-import { deleteAPI, getAPI, postAPI } from '../utils/apiCallHelper';
+import { deleteAPI, getAPI, postAPI, putAPI } from '../utils/apiCallHelper';
 
 test.describe('User API Tests', () => {
     const BASE_URL = `${process.env.BASE_URL}${process.env.API_VERSION}`;
@@ -45,7 +45,7 @@ test.describe('User API Tests', () => {
 
 
 
-    test ('Create User', async ({request}) => {
+    test ('End-to-End User API Tests - Post, Get, Put, Delete', async ({request}) => {
         
       await postAPI(
             request,
@@ -55,8 +55,6 @@ test.describe('User API Tests', () => {
             expectedResponseSchema
         );
 
-    });
-    test ('Get User by Username', async ({request}) => {
 
         await getAPI(
             request,
@@ -64,14 +62,26 @@ test.describe('User API Tests', () => {
             200, 
             expectedGetUserResponseSchema
         );
-    });
 
-    test ('Delete User by Username', async ({request}) => {
+        await putAPI(
+            request,
+            `${BASE_URL}/user/${userName}`,
+            {
+                ...newCreateUserRequestBody,
+                firstName: faker.person.firstName(),
+                lastName: faker.person.lastName(),
+                email: faker.internet.email(),
+            },
+            200, 
+            expectedResponseSchema
+        );
+
         await deleteAPI(
             request,
             `${BASE_URL}/user/${userName}`,
             200, 
             expectedDeleteUserResponseSchema
         );
+
     });
 });
