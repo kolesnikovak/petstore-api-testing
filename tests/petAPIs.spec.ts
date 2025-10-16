@@ -49,6 +49,5 @@ test.describe('User API Tests', () => {
             200,
             expectedAddPetResponseSchema
         );
-        expect(response.status()).toBe(200);
     });
 });
