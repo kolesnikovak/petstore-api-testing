@@ -19,7 +19,7 @@ test.describe('User API Tests', () => {
         }
 
 
-        const expectedResponseSchema = z.object({
+        const expectedCreateUserResponseSchema = z.object({
             code: z.literal(200),
             type: z.literal("unknown"),
             message: z.literal(newCreateUserRequestBody.id.toString()),
@@ -37,7 +37,15 @@ test.describe('User API Tests', () => {
             userStatus: z.number(),
         });
 
-            const expectedDeleteUserResponseSchema = z.object ({
+        
+        const expectedPutUserResponseSchema = z.object ({
+            code: z.literal(200),
+            type: z.literal("unknown"),
+            message: z.literal(newCreateUserRequestBody.id.toString())
+        });
+
+
+        const expectedDeleteUserResponseSchema = z.object ({
         code: z.literal(200),
         type: z.literal("unknown"),
         message: z.literal(userName)
@@ -52,7 +60,7 @@ test.describe('User API Tests', () => {
             `${BASE_URL}/user`,
             newCreateUserRequestBody,
             200, 
-            expectedResponseSchema
+            expectedCreateUserResponseSchema
         );
 
 
@@ -67,13 +75,17 @@ test.describe('User API Tests', () => {
             request,
             `${BASE_URL}/user/${userName}`,
             {
-                ...newCreateUserRequestBody,
+                id: 345238,
+                username: "TestUserNameKatya",
                 firstName: faker.person.firstName(),
                 lastName: faker.person.lastName(),
                 email: faker.internet.email(),
+                password: "Test1234!",
+                phone: faker.phone.number(),
+                userStatus: 0
             },
             200, 
-            expectedResponseSchema
+            expectedPutUserResponseSchema
         );
 
         await deleteAPI(
