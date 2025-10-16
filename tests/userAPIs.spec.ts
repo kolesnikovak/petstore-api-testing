@@ -37,12 +37,23 @@ test.describe('User API Tests', () => {
             userStatus: z.number(),
         });
 
-        
+
         const expectedPutUserResponseSchema = z.object ({
             code: z.literal(200),
             type: z.literal("unknown"),
             message: z.literal(newCreateUserRequestBody.id.toString())
         });
+
+        const updateUserRequestBody = {
+            id: 345238,
+            username: "TestUserNameKatya",
+            firstName: faker.person.firstName(),
+            lastName: faker.person.lastName(),
+            email: faker.internet.email(),
+            password: "Test1234!",
+            phone: faker.phone.number(),
+            userStatus: 0
+        }
 
 
         const expectedDeleteUserResponseSchema = z.object ({
@@ -74,16 +85,7 @@ test.describe('User API Tests', () => {
         await putAPI(
             request,
             `${BASE_URL}/user/${userName}`,
-            {
-                id: 345238,
-                username: "TestUserNameKatya",
-                firstName: faker.person.firstName(),
-                lastName: faker.person.lastName(),
-                email: faker.internet.email(),
-                password: "Test1234!",
-                phone: faker.phone.number(),
-                userStatus: 0
-            },
+            updateUserRequestBody,
             200, 
             expectedPutUserResponseSchema
         );
