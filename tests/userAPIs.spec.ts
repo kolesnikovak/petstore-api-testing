@@ -1,7 +1,7 @@
 import {test, expect} from '@playwright/test';
 import {faker} from '@faker-js/faker';
 import {z} from 'zod';
-import { deleteAPI, getAPI, postAPI } from '../utils/apiCallHelper';
+import { deleteAPI, getAPI, postAPI, putAPI } from '../utils/apiCallHelper';
 
 test.describe('User API Tests', () => {
     const BASE_URL = `${process.env.BASE_URL}${process.env.API_VERSION}`;
@@ -19,7 +19,7 @@ test.describe('User API Tests', () => {
         }
 
 
-        const expectedResponseSchema = z.object({
+        const expectedCreateUserResponseSchema = z.object({
             code: z.literal(200),
             type: z.literal("unknown"),
             message: z.literal(newCreateUserRequestBody.id.toString()),
@@ -37,7 +37,26 @@ test.describe('User API Tests', () => {
             userStatus: z.number(),
         });
 
-            const expectedDeleteUserResponseSchema = z.object ({
+
+        const expectedPutUserResponseSchema = z.object ({
+            code: z.literal(200),
+            type: z.literal("unknown"),
+            message: z.literal(newCreateUserRequestBody.id.toString())
+        });
+
+        const updateUserRequestBody = {
+            id: 345238,
+            username: "TestUserNameKatya",
+            firstName: faker.person.firstName(),
+            lastName: faker.person.lastName(),
+            email: faker.internet.email(),
+            password: "Test1234!",
+            phone: faker.phone.number(),
+            userStatus: 0
+        }
+
+
+        const expectedDeleteUserResponseSchema = z.object ({
         code: z.literal(200),
         type: z.literal("unknown"),
         message: z.literal(userName)
@@ -45,18 +64,16 @@ test.describe('User API Tests', () => {
 
 
 
-    test ('Create User', async ({request}) => {
+    test ('End-to-End User API Tests - Post, Get, Put, Delete', async ({request}) => {
         
       await postAPI(
             request,
             `${BASE_URL}/user`,
             newCreateUserRequestBody,
             200, 
-            expectedResponseSchema
+            expectedCreateUserResponseSchema
         );
 
-    });
-    test ('Get User by Username', async ({request}) => {
 
         await getAPI(
             request,
@@ -64,14 +81,21 @@ test.describe('User API Tests', () => {
             200, 
             expectedGetUserResponseSchema
         );
-    });
 
-    test ('Delete User by Username', async ({request}) => {
+        await putAPI(
+            request,
+            `${BASE_URL}/user/${userName}`,
+            updateUserRequestBody,
+            200, 
+            expectedPutUserResponseSchema
+        );
+
         await deleteAPI(
             request,
             `${BASE_URL}/user/${userName}`,
             200, 
             expectedDeleteUserResponseSchema
         );
+
     });
 });
