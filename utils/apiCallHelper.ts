@@ -23,8 +23,7 @@ export async function getAPI(
     // retry logic because API is not working properly, it will retry 5 times before failing the test
     for (let i = 0; i < retryCount; i++) {
         // make the API call
-        const response = await request.get(url);
-
+        const response = await request.get(url, { params: parameters });
         // validate status code and schema if status code is expected, otherwise retry
         if (response.status() === expectedStatusCode) {
             const responseBodyJson = await response.json()
