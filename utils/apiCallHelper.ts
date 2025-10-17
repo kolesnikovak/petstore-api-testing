@@ -16,6 +16,7 @@ export async function getAPI(
     url: string,
     expectedStatusCode: number,
     expectedSchema: ZodTypeAny,
+    parameters: Record<string, any> = {},
     retryCount: number = 5, // default retry count is 5, if not provided, OPTIONAL parameter
 ): Promise<APIResponse> {
 
