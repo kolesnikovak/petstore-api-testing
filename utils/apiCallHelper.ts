@@ -16,14 +16,14 @@ export async function getAPI(
     url: string,
     expectedStatusCode: number,
     expectedSchema: ZodTypeAny,
+    parameters: Record<string, any> = {},
     retryCount: number = 5, // default retry count is 5, if not provided, OPTIONAL parameter
 ): Promise<APIResponse> {
 
     // retry logic because API is not working properly, it will retry 5 times before failing the test
     for (let i = 0; i < retryCount; i++) {
         // make the API call
-        const response = await request.get(url);
-
+        const response = await request.get(url, { params: parameters });
         // validate status code and schema if status code is expected, otherwise retry
         if (response.status() === expectedStatusCode) {
             const responseBodyJson = await response.json()
