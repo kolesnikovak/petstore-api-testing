@@ -2,7 +2,7 @@ import {test, expect} from '@playwright/test';
 import {faker} from '@faker-js/faker';
 import {z} from 'zod';
 import { deleteAPI, getAPI, postAPI, putAPI } from '../utils/apiCallHelper';
-import { get } from 'http';
+
 
 test.describe('User API Tests', () => {
     const BASE_URL = `${process.env.BASE_URL}${process.env.API_VERSION}`;
@@ -85,7 +85,7 @@ test.describe('User API Tests', () => {
             message: z.literal(addAPetRequestBody.id.toString())
         });
 
-         const expectedFindPetByStatusResponseSchema = z.array(z.object({
+        const expectedFindPetResponseSchema = z.array(z.object({
             id: z.number(),
             category: z.object({
                 id: z.number(),
@@ -138,11 +138,22 @@ test.describe('User API Tests', () => {
             request,
             `${BASE_URL}/pet/findByStatus`,
             200,
-            expectedFindPetByStatusResponseSchema,
+            expectedFindPetResponseSchema,
             { status: 'available' }
         );
     }); 
 
+    test ('Find pet by tags', async ({request}) => {
+    
+        await getAPI(
+            request,
+            `${BASE_URL}/pet/findByTags`,
+            200,
+            expectedFindPetResponseSchema,
+            { tags: 'tag1,tag2' }
+        );
+
+    });
 });
 
 
