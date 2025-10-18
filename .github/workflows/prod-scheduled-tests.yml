@@ -1,0 +1,77 @@
+name: Prod Environment - Scheduled API Tests
+
+on:
+  # Schedule to run three times daily at 8:00 AM, 12:00 PM, and 6:00 PM UTC
+  schedule:
+    - cron: '0 8 * * *'
+    - cron: '0 12 * * *'
+    - cron: '0 18 * * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  api-tests-prod:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run API Tests - Production Environment
+        env:
+          BASE_URL: 'https://petstore.swagger.io'
+          API_VERSION: '/v2'
+          USERNAME: 'TestUserNameKatya'
+          PASSWORD: 'Test1234!'
+        run: npx playwright test
+        continue-on-error: false
+
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-prod-${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 60
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-prod-${{ github.run_number }}
+          path: test-results/
+          retention-days: 60
+
+      - name: Create Test Summary
+        if: always()
+        run: |
+          echo "## Production Environment Test Results 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** Production" >> $GITHUB_STEP_SUMMARY
+          echo "**Run Number:** ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "🚨 CRITICAL: Production environment tests failed!"
+          echo "Immediate attention required - check the test report for details"
+
+      - name: Success Notification
+        if: success()
+        run: |
+          echo "✅ Production tests passed successfully!"

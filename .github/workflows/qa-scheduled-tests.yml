@@ -1,0 +1,69 @@
+name: QA Environment - Scheduled API Tests
+
+on:
+  # Schedule to run twice daily at 9:00 AM and 3:00 PM UTC
+  schedule:
+    - cron: '0 9 * * *'
+    - cron: '0 15 * * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  api-tests-qa:
+    runs-on: ubuntu-latest
+    environment: qa
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run API Tests - QA Environment
+        env:
+          BASE_URL: 'https://petstore.swagger.io'
+          API_VERSION: '/v2'
+          USERNAME: 'TestUserNameKatya'
+          PASSWORD: 'Test1234!'
+        run: npx playwright test
+
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-qa-${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-qa-${{ github.run_number }}
+          path: test-results/
+          retention-days: 30
+
+      - name: Create Test Summary
+        if: always()
+        run: |
+          echo "## QA Environment Test Results 🧪" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** QA" >> $GITHUB_STEP_SUMMARY
+          echo "**Run Number:** ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "⚠️ QA environment tests failed!"
+          echo "Check the test report for details"
