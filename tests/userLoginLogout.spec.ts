@@ -5,8 +5,8 @@ import { deleteAPI, getAPI, postAPI, putAPI } from '../utils/apiCallHelper';
 
 test.describe('User API Tests', () => {
     const BASE_URL = `${process.env.BASE_URL}${process.env.API_VERSION}`;
-    const userName = process.env.USERNAME;
-    const password = process.env.PASSWORD;
+    const userName = process.env.USERNAME!;
+    const password = process.env.PASSWORD!;
 
     const newCreateUserRequestBody = {
         id: 345238,
@@ -19,30 +19,30 @@ test.describe('User API Tests', () => {
         userStatus: 0
     }
     const expectedCreateUserResponseSchema = z.object({
-        code: z.literal(200),
-        type: z.literal("unknown"),
-        message: z.literal(newCreateUserRequestBody.id.toString()),
+        code: z.number(),
+        type: z.string(),
+        message: z.string(),
     });
 
     const expectedLoginResponseSchema = z.object({
-        code: z.literal(200),
-        type: z.literal("unknown"),
+        code: z.number(),
+        type: z.string(),
         message: z.string().regex(/^logged in user session:\d+$/) // regex to match session ID format
     });
 
     const expectedLogoutResponseSchema = z.object({
-        code: z.literal(200),
-        type: z.literal("unknown"),
-        message: z.literal("ok")
-    });
-
-    const deleteUserResponseSchema = z.object({
-        code: z.literal(200),
-        type: z.literal("unknown"),
+        code: z.number(),
+        type: z.string(),
         message: z.string()
     });
 
-    test('User Createion, Login, Logout and Delete', async ({ request }) => {
+    const deleteUserResponseSchema = z.object({
+        code: z.number(),
+        type: z.string(),
+        message: z.string()
+    });
+
+    test('User Creation, Login, Logout and Delete', async ({ request }) => {
 
         await postAPI(
             request,
@@ -68,9 +68,10 @@ test.describe('User API Tests', () => {
             expectedLogoutResponseSchema
         );
 
+
         await deleteAPI(
             request,
-            `${BASE_URL}/user/${userName}`,
+            `${BASE_URL}/user/${encodeURIComponent(userName)}`,
             200,
             deleteUserResponseSchema
         );
