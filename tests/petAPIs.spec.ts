@@ -100,6 +100,12 @@ test.describe('User API Tests', () => {
             status: z.string()
         }));
 
+        const expectedInventoryResponseSchema = z.record(z.string(), 
+            z.number()).refine((data) => Object.keys(data).length === 14, {
+            message: "Response must have exactly 14 keys",
+        });
+
+
     test('End to end test with POST, GET, PUT and DELETE a pet', async ({request}) => {
         await postAPI(
             request,
@@ -154,8 +160,14 @@ test.describe('User API Tests', () => {
         );
 
     });
+
+    test ('Validate length of keys and values for pet inventory', async ({request}) => {
+    
+        const response = await getAPI(
+            request,
+            `${BASE_URL}/store/inventory`,
+            200,
+            expectedInventoryResponseSchema
+        );
+    });
 });
-
-
-
-
