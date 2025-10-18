@@ -34,8 +34,7 @@ jobs:
         env:
           BASE_URL: 'https://petstore.swagger.io'
           API_VERSION: '/v2'
-          USERNAME: 'TestUserNameKatya'
-          PASSWORD: 'Test1234!'
+         
         run: npx playwright test
 
       - name: Upload Test Report
