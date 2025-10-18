@@ -1,5 +1,6 @@
 import { APIRequestContext, APIResponse } from '@playwright/test';
 import { ZodTypeAny } from 'zod';
+import { faker } from '@faker-js/faker';
 
 
 /**
@@ -145,5 +146,19 @@ export async function deleteAPI(
     throw new Error('Max retries reached. API call failed.');
 }
 
-
-
+export function createRandomUsersRequestBody(amountOfUsers: number) {
+    const users = [];
+    for (let i = 0; i < amountOfUsers; i++) {
+        users.push({
+            id: 345238,
+            username: faker.internet.username(),
+            firstName: faker.person.firstName(),
+            lastName: faker.person.lastName(),
+            email: faker.internet.email(),
+            password: faker.internet.password(),
+            phone: faker.phone.number(),
+        userStatus: 0
+        });
+    }
+    return users;
+}
