@@ -12,7 +12,7 @@ test.describe('User API Tests', () => {
         quantity: faker.number.int({min: 1, max: 100}),
         shipDate: faker.date.future().toISOString(),
         status: faker.helpers.arrayElement(['placed', 'approved', 'delivered']),
-        complete: true
+        complete: faker.datatype.boolean()
     };
 
     const orderId = placeAnOrderRequestBody.id;
@@ -23,8 +23,8 @@ test.describe('User API Tests', () => {
         petId: z.number(),
         quantity: z.number(),
         shipDate: z.string(),
-        status: z.literal('placed'),
-        complete: z.literal(true)
+        status: z.literal('placed').or(z.literal('approved')).or(z.literal('delivered')),
+        complete: z.literal(true).or(z.literal(false)),
     });
 
 
