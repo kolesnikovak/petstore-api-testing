@@ -85,6 +85,21 @@ test.describe('User API Tests', () => {
             message: z.literal(addAPetRequestBody.id.toString())
         });
 
+         const expectedFindPetByStatusResponseSchema = z.array(z.object({
+            id: z.number(),
+            category: z.object({
+                id: z.number(),
+                name: z.string().optional()
+            }).optional(),
+            name: z.string(),
+            photoUrls: z.array(z.string()),
+            tags: z.array(z.object({
+                id: z.number(),
+                name: z.string()
+            })),
+            status: z.string()
+        }));
+
     test('End to end test with POST, GET, PUT and DELETE a pet', async ({request}) => {
         await postAPI(
             request,
@@ -116,6 +131,18 @@ test.describe('User API Tests', () => {
             expectedDeletePetResponseSchema
         );
     }); 
+
+    test ('Find pet by status', async ({request}) => {
+    
+        await getAPI(
+            request,
+            `${BASE_URL}/pet/findByStatus`,
+            200,
+            expectedFindPetByStatusResponseSchema,
+            { status: 'available' }
+        );
+    }); 
+
 });
 
 
