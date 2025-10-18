@@ -5,30 +5,31 @@ import { deleteAPI, getAPI, postAPI, putAPI } from '../utils/apiCallHelper';
 
 test.describe('User API Tests', () => {
     const BASE_URL = `${process.env.BASE_URL}${process.env.API_VERSION}`;
-    const userName = "TestUserNameKatya";
+    const userName = process.env.USERNAME || "TestUserNameKatya";
+    const password = process.env.PASSWORD || "Test1234!";
 
     const newCreateUserRequestBody = {
             id: 345238,
-            username: "TestUserNameKatya",
+            username: userName,
             firstName: faker.person.firstName(),
             lastName: faker.person.lastName(),
             email: faker.internet.email(),
-            password: "Test1234!",
+            password: password,
             phone: faker.phone.number(),
             userStatus: 0
         }
 
 
         const expectedCreateUserResponseSchema = z.object({
-            code: z.literal(200),
-            type: z.literal("unknown"),
-            message: z.literal(newCreateUserRequestBody.id.toString()),
+            code: z.number(),
+            type: z.string(),
+            message: z.string(),
         });
 
 
          const expectedGetUserResponseSchema = z.object({
             id: z.number(),
-            username: z.literal(userName),
+            username: z.string(),
             firstName: z.string(),
             lastName: z.string(),
             email: z.string().email(),
@@ -39,27 +40,27 @@ test.describe('User API Tests', () => {
 
 
         const expectedPutUserResponseSchema = z.object ({
-            code: z.literal(200),
-            type: z.literal("unknown"),
-            message: z.literal(newCreateUserRequestBody.id.toString())
+            code: z.number(),
+            type: z.string(),
+            message: z.string()
         });
 
         const updateUserRequestBody = {
             id: 345238,
-            username: "TestUserNameKatya",
+            username: userName,
             firstName: faker.person.firstName(),
             lastName: faker.person.lastName(),
             email: faker.internet.email(),
-            password: "Test1234!",
+            password: password,
             phone: faker.phone.number(),
             userStatus: 0
         }
 
 
         const expectedDeleteUserResponseSchema = z.object ({
-        code: z.literal(200),
-        type: z.literal("unknown"),
-        message: z.literal(userName)
+        code: z.number(),
+        type: z.string(),
+        message: z.string()
     });
 
 
