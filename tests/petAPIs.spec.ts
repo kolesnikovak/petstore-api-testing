@@ -159,7 +159,6 @@ test.describe('User API Tests', () => {
     });
 
     test ('Validate length of keys and values for pet inventory', async ({request}) => {
-    test ('Validate length of keys and values for pet inventory', async ({request}) => {
     
         await getAPI(
             request,
@@ -168,3 +167,4 @@ test.describe('User API Tests', () => {
             expectedInventoryResponseSchema
         );
     });
+});
